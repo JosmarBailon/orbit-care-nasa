@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbit Care // Private Mental Health Space</title>
+  <style>
+    :root {
+      --bg-void: #020704;
+      --bg-panel: #041109;
+      --bg-panel-alt: #06190e;
+      --bg-card: rgba(4, 17, 9, 0.88);
+      --bg-subpanel: rgba(2, 10, 5, 0.92);
+      --bg-frame: radial-gradient(circle at center, rgba(6, 28, 16, 0.55) 0%, rgba(2, 7, 4, 0.95) 100%);
+      --header-grad: linear-gradient(90deg, rgba(56, 189, 248, 0.12) 0%, rgba(4, 17, 9, 0.9) 65%);
+      --grid-line: rgba(40, 199, 111, 0.04);
+      --dot-color: rgba(104, 255, 155, 0.12);
+      --green-bright: #68ff9b;
+      --green-mid: #28c76f;
+      --green-dim: #114b2b;
+      --green-border: #1b6b3e;
+      --privacy-accent: #38bdf8;
+      --privacy-bg: rgba(56, 189, 248, 0.12);
+      --text-shadow-glow: 0 0 8px rgba(56, 189, 248, 0.7);
+      --glow-soft: 0 0 10px rgba(56, 189, 248, 0.25);
+      --glow-strong: 0 0 14px rgba(56, 189, 248, 0.55);
+      --inset-shadow: inset 0 0 30px rgba(17, 75, 43, 0.35);
+    }
+
+    body.light-mode {
+      --bg-void: #e6f4ec;
+      --bg-panel: #f4fbf7;
+      --bg-panel-alt: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-subpanel: rgba(238, 249, 243, 0.96);
+      --bg-frame: radial-gradient(circle at center, rgba(235, 250, 241, 0.85) 0%, rgba(214, 238, 224, 0.95) 100%);
+      --header-grad: linear-gradient(90deg, rgba(3, 105, 161, 0.15) 0%, rgba(244, 251, 247, 0.95) 65%);
+      --grid-line: rgba(16, 122, 63, 0.07);
+      --dot-color: rgba(16, 122, 63, 0.16);
+      --green-bright: #0d6e38;
+      --green-mid: #16a34a;
+      --green-dim: #bbf7d0;
+      --green-border: #52b788;
+      --privacy-accent: #0369a1;
+      --privacy-bg: rgba(3, 105, 161, 0.12);
+      --text-shadow-glow: none;
+      --glow-soft: 0 2px 8px rgba(3, 105, 161, 0.12);
+      --glow-strong: 0 4px 12px rgba(3, 105, 161, 0.22);
+      --inset-shadow: inset 0 0 20px rgba(82, 183, 136, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--privacy-accent);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 14px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hud-frame {
+      flex: 1;
+      border: 1px solid var(--privacy-accent);
+      background: var(--bg-frame);
+      box-shadow: inset 0 0 25px rgba(56, 189, 248, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      gap: 14px;
+      position: relative;
+    }
+
+    .navbar {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--privacy-accent);
+      border-top: 2px solid var(--privacy-accent);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: var(--glow-soft);
+      position: relative;
+    }
+
+    .navbar::after {
+      content: "PSYCHOLOGICAL PRIVACY // ENCRYPTED LOCAL VAULT";
+      position: absolute;
+      bottom: -14px;
+      right: 12px;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--privacy-accent);
+      background-color: var(--bg-void);
+      padding: 0 6px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--privacy-accent);
+      background-color: var(--bg-panel-alt);
+      color: var(--privacy-accent);
+      text-decoration: none;
+      box-shadow: var(--glow-soft);
+    }
+
+    .profile-link svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .nav-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background-color: var(--bg-panel-alt);
+      color: var(--privacy-accent);
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid var(--privacy-accent);
+      border-left: 3px solid var(--privacy-accent);
+      font-size: 0.88rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--privacy-bg);
+      box-shadow: var(--glow-soft);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--privacy-accent);
+      color: var(--privacy-accent);
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .toggle-track {
+      width: 36px;
+      height: 18px;
+      border: 1px solid var(--privacy-accent);
+      background-color: var(--bg-void);
+      position: relative;
+      display: inline-block;
+    }
+
+    .toggle-thumb {
+      width: 12px;
+      height: 12px;
+      background-color: var(--privacy-accent);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.25s ease;
+    }
+
+    body.light-mode .toggle-thumb {
+      transform: translateX(18px);
+    }
+
+    .brand-container {
+      background-color: var(--bg-panel-alt);
+      padding: 0.5rem 1.35rem;
+      border: 1px solid var(--privacy-accent);
+      border-right: 4px solid var(--privacy-accent);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--privacy-accent);
+      text-shadow: var(--text-shadow-glow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-indicator {
+      width: 8px;
+      height: 8px;
+      background-color: var(--privacy-accent);
+      box-shadow: 0 0 8px var(--privacy-accent);
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.25;
+      }
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      padding-top: 6px;
+    }
+
+    .stats-card {
+      width: 100%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--privacy-accent);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: var(--inset-shadow);
+    }
+
+    .corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--privacy-accent);
+      border-style: solid;
+      pointer-events: none;
+    }
+
+    .corner.tl {
+      top: -1px;
+      left: -1px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .corner.tr {
+      top: -1px;
+      right: -1px;
+      border-width: 2px 2px 0 0;
+    }
+
+    .corner.bl {
+      bottom: -1px;
+      left: -1px;
+      border-width: 0 0 2px 2px;
+    }
+
+    .corner.br {
+      bottom: -1px;
+      right: -1px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .stats-header {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--privacy-accent);
+      background: var(--header-grad);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stats-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: var(--text-shadow-glow);
+    }
+
+    .privacy-grid {
+      flex: 1;
+      padding: 1.25rem;
+      background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .sub-card {
+      border: 1px solid var(--privacy-accent);
+      background-color: var(--bg-subpanel);
+      box-shadow: var(--inset-shadow);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .sub-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--privacy-accent);
+      padding-bottom: 0.5rem;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .privacy-notice {
+      background-color: var(--privacy-bg);
+      border: 1px dashed var(--privacy-accent);
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-group label {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--privacy-accent);
+    }
+
+    .field-group textarea {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--privacy-accent);
+      color: var(--privacy-accent);
+      padding: 0.65rem;
+      font-size: 0.85rem;
+      outline: none;
+      resize: vertical;
+    }
+
+    .action-btn {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--privacy-accent);
+      color: var(--privacy-accent);
+      padding: 0.55rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: var(--glow-soft);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: var(--privacy-bg);
+      box-shadow: var(--glow-strong);
+    }
+
+    /* Simulador de respiración relajante */
+    .breathing-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      border: 1px solid var(--privacy-accent);
+      background-color: var(--bg-panel-alt);
+      gap: 1.2rem;
+      text-align: center;
+    }
+
+    .breath-circle {
+      width: 110px;
+      height: 110px;
+      border: 2px dashed var(--privacy-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      transition: transform 4s ease-in-out;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .breath-circle.inhale {
+      transform: scale(1.3);
+      background-color: var(--privacy-bg);
+    }
+
+    .breath-circle.exhale {
+      transform: scale(0.9);
+    }
+
+    @media (max-width: 960px) {
+      .privacy-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================================================
+       CHEQUEO DIARIO DE ÁNIMO (PHQ-9 + VALIDACIÓN BIOMÉTRICA)
+       ========================================================= */
+    .phq-section {
+      padding: 0 1.25rem 1.25rem 1.25rem;
+    }
+
+    .phq-stepper {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .phq-stepper .st {
+      flex: 1;
+      min-width: 160px;
+      border: 1px solid var(--privacy-accent);
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.45;
+    }
+
+    .phq-stepper .st.active {
+      opacity: 1;
+      background-color: var(--privacy-bg);
+      font-weight: 700;
+    }
+
+    .phq-stepper .st.done {
+      opacity: 0.9;
+      border-color: var(--green-mid);
+      color: var(--green-mid);
+    }
+
+    .phq-step {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .phq-step[hidden],
+    .phq-done[hidden] {
+      display: none;
+    }
+
+    .phq-intro {
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: var(--green-bright);
+    }
+
+    .phq-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .phq-item {
+      border: 1px solid var(--green-border);
+      border-left: 3px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .phq-item.answered {
+      border-left-color: var(--privacy-accent);
+    }
+
+    .phq-item.risk {
+      border-left-color: #ef4444;
+    }
+
+    .phq-q {
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--green-bright);
+      display: flex;
+      gap: 0.55rem;
+    }
+
+    .phq-num {
+      font-weight: 700;
+      color: var(--privacy-accent);
+    }
+
+    .phq-opts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.35rem;
+    }
+
+    .phq-opt input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .phq-opt span {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--green-border);
+      padding: 0.42rem 0.55rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: var(--green-mid);
+      transition: all 0.15s ease;
+    }
+
+    .phq-opt span:hover {
+      border-color: var(--privacy-accent);
+    }
+
+    .phq-opt em {
+      font-style: normal;
+      font-weight: 700;
+      border: 1px solid currentColor;
+      padding: 0 5px;
+      font-size: 0.64rem;
+    }
+
+    .phq-opt input:checked+span {
+      border-color: var(--privacy-accent);
+      background-color: var(--privacy-bg);
+      color: var(--privacy-accent);
+      font-weight: 700;
+    }
+
+    .phq-opt input:focus-visible+span {
+      outline: 1px dashed var(--privacy-accent);
+    }
+
+    .phq-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      font-size: 0.76rem;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .action-btn.ghost {
+      box-shadow: none;
+      border-style: dashed;
+    }
+
+    .ctx-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .ctx-box {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+      padding: 0.45rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.66rem;
+      color: var(--green-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .ctx-box strong {
+      font-size: 0.95rem;
+      color: var(--green-bright);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .ctx-box input {
+      background: transparent;
+      border: 1px solid var(--privacy-accent);
+      color: var(--green-bright);
+      width: 100%;
+      padding: 2px 5px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .cap-progress {
+      height: 6px;
+      border: 1px solid var(--privacy-accent);
+    }
+
+    .cap-progress>div {
+      height: 100%;
+      width: 0;
+      background-color: var(--privacy-accent);
+      transition: width 0.4s linear;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .res-card {
+      --lvl: var(--privacy-accent);
+      border: 1px solid var(--green-border);
+      border-top: 3px solid var(--lvl);
+      background-color: var(--bg-panel-alt);
+      padding: 0.75rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .res-card.optimo {
+      --lvl: #22c55e;
+    }
+
+    .res-card.precaucion {
+      --lvl: #f59e0b;
+    }
+
+    .res-card.accion {
+      --lvl: #ef4444;
+    }
+
+    .res-label {
+      font-size: 0.66rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .res-big {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--lvl);
+      line-height: 1.1;
+    }
+
+    .res-big small {
+      font-size: 0.8rem;
+      color: var(--green-mid);
+      font-weight: 400;
+    }
+
+    .res-sub {
+      font-size: 0.74rem;
+      color: var(--green-bright);
+      line-height: 1.4;
+    }
+
+    .factor-row {
+      display: grid;
+      grid-template-columns: 1fr 64px;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.66rem;
+      color: var(--green-mid);
+    }
+
+    .factor-bar {
+      height: 6px;
+      background-color: rgba(100, 116, 139, 0.25);
+    }
+
+    .factor-bar>div {
+      height: 100%;
+    }
+
+    .lights {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .light-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      opacity: 0.22;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .light-dot.green {
+      background-color: #22c55e;
+    }
+
+    .light-dot.yellow {
+      background-color: #f59e0b;
+    }
+
+    .light-dot.red {
+      background-color: #ef4444;
+    }
+
+    .light-dot.on {
+      opacity: 1;
+      transform: scale(1.15);
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .final-banner {
+      border: 1px solid;
+      border-left: 6px solid;
+      padding: 0.8rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .final-banner.optimo {
+      color: #22c55e;
+      background-color: rgba(34, 197, 94, 0.1);
+    }
+
+    .final-banner.precaucion {
+      color: #f59e0b;
+      background-color: rgba(245, 158, 11, 0.12);
+    }
+
+    .final-banner.accion {
+      color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.12);
+    }
+
+    body.light-mode .final-banner.optimo {
+      color: #15803d;
+    }
+
+    body.light-mode .final-banner.precaucion {
+      color: #b45309;
+    }
+
+    body.light-mode .final-banner.accion {
+      color: #b91c1c;
+    }
+
+    .final-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .final-msg {
+      font-size: 0.76rem;
+      line-height: 1.4;
+      margin-top: 3px;
+    }
+
+    .tx-panel {
+      border: 1px dashed var(--privacy-accent);
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--green-bright);
+    }
+
+    .tx-panel.warn {
+      border-color: #f59e0b;
+    }
+
+    .tx-panel.crit {
+      border-color: #ef4444;
+    }
+
+    .tx-panel h4 {
+      font-size: 0.82rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--privacy-accent);
+    }
+
+    .tx-checks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem 1rem;
+    }
+
+    .tx-checks label {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
+
+    .tx-checks input {
+      accent-color: var(--privacy-accent);
+    }
+
+    .tx-note {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--privacy-accent);
+      color: var(--privacy-accent);
+      padding: 0.5rem;
+      font-size: 0.78rem;
+      outline: none;
+      resize: vertical;
+      width: 100%;
+    }
+
+    .tx-preview {
+      background-color: var(--bg-void);
+      border: 1px solid var(--green-border);
+      padding: 0.5rem 0.6rem;
+      font-size: 0.66rem;
+      max-height: 170px;
+      overflow: auto;
+      white-space: pre;
+      color: var(--green-mid);
+    }
+
+    .tx-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tx-meta {
+      font-size: 0.7rem;
+      color: var(--green-mid);
+    }
+
+    .tx-log {
+      list-style: none;
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      color: var(--green-mid);
+    }
+
+    .tx-log li.ok {
+      color: var(--green-bright);
+    }
+
+    .crisis-box {
+      border: 1px solid #ef4444;
+      border-left: 6px solid #ef4444;
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      padding: 0.75rem 0.9rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    body.light-mode .crisis-box {
+      color: #b91c1c;
+    }
+
+    .phq-done {
+      border: 1px solid var(--green-mid);
+      background-color: rgba(40, 199, 111, 0.08);
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: var(--green-bright);
+    }
+
+    .history-wrap {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0.9rem;
+    }
+
+    .trend-box {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trend-legend {
+      font-size: 0.66rem;
+      color: var(--green-mid);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    canvas#phqTrend {
+      width: 100%;
+      height: 150px;
+      display: block;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      border: 1px solid var(--green-border);
+      padding: 0.35rem 0.45rem;
+      text-align: left;
+      color: var(--green-bright);
+    }
+
+    .history-table th {
+      background-color: var(--bg-panel-alt);
+      color: var(--privacy-accent);
+      font-size: 0.64rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      font-weight: 700;
+      padding: 1px 5px;
+      border: 1px solid currentColor;
+      font-size: 0.62rem;
+      white-space: nowrap;
+    }
+
+    .tag.optimo {
+      color: #22c55e;
+    }
+
+    .tag.precaucion {
+      color: #f59e0b;
+    }
+
+    .tag.accion {
+      color: #ef4444;
+    }
+
+    @media (max-width: 960px) {
+
+      .result-grid,
+      .history-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .ctx-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+
+      .phq-opts,
+      .tx-checks {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hud-frame">
+    <!-- Barra superior -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="usuario.html" class="profile-link" title="Emilio Hernández Landa Dossier" aria-label="Profile">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" />
+          </svg>
+        </a>
+
+        <nav class="nav-options">
+          <a href="main.html" class="nav-btn">Main Dashboard</a>
+          <a href="opcion2.html" class="nav-btn">Countermeasures & EVA</a>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span id="themeLabel">Light: OFF</span>
+        </button>
+
+        <div class="brand-container">
+          <span class="brand-indicator"></span>
+          <span>Orbit Care</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <section class="stats-card">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="stats-header">
+          <h2>Private Mental Health Space // Crew Member: Emilio Hernández Landa</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span style="font-size:0.72rem; border:1px solid var(--privacy-accent); padding:2px 7px;" data-control-mode-label>MANUAL MODE</span>
+            <span style="font-size: 0.78rem; letter-spacing: 1px;">CONFIDENTIAL MODE ACTIVE</span>
+          </div>
+        </div>
+
+        <div id="gestureHudHostO1" style="padding: 1rem 1.25rem 0 1.25rem;"></div>
+
+        <div class="privacy-grid">
+          <!-- Left: Encrypted Self-Management Journal (Avoids under-reporting from Ground fear) -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span>Encrypted Emotional Log (Local)</span>
+              <span>PRIVACY 100%</span>
+            </div>
+
+            <div class="privacy-notice">
+              🔒 <strong>Orbit Care Guarantee:</strong> This space is designed around NASA HRP human factors guidelines.
+              Your stress logs, interpersonal strain, or fatigue notes are self-managed locally and
+              <strong>are never transmitted to Ground Control</strong>, removing the stigma or fear of flight-status exclusion for mild fatigue.
+            </div>
+
+            <div class="field-group">
+              <label for="privateDiary">Today's personal reflection or decompression note:</label>
+              <textarea id="privateDiary" rows="6"
+                placeholder="Write your thoughts, frustrations, or reflections here... (Stored solely on your local device)."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span id="diaryFeedback" style="font-size: 0.75rem;">Local encryption active.</span>
+              <button type="button" class="action-btn" id="saveDiaryBtn">Encrypt &amp; Save</button>
+            </div>
+          </div>
+
+          <!-- Right: Relaxation & Heart Coherence Trainer -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span>Heart Coherence Breathing Protocol (4-7-8)</span>
+              <span>BIOFEEDBACK</span>
+            </div>
+
+            <p style="font-size: 0.78rem; line-height: 1.4;">
+              Use this guided breathing cadence to lower cortisol and stabilize your autonomic nervous system after a demanding shift in microgravity.
+            </p>
+
+            <div class="breathing-box">
+              <div class="breath-circle" id="breathCircle">READY</div>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="action-btn" id="startBreathBtn">Start Cycle</button>
+                <button type="button" class="action-btn" id="stopBreathBtn"
+                  style="border-color: #ef4444; color: #ef4444;">Stop</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAILY MOOD CHECK-IN: PHQ-9 + BIOMETRIC VALIDATION + GROUND DOWNLINK CHOICE -->
+        <div class="phq-section">
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span>🧠 Daily Mood Check-In // PHQ-9 + Biometric Validation</span>
+              <span id="phqDateBadge">TODAY</span>
+            </div>
+
+            <div class="privacy-notice">
+              📋 <strong>How does it work?</strong> Each day you complete the clinical <strong>PHQ-9</strong> questionnaire (9
+              questions, ~2 min).
+              Next, Orbit Care captures your <strong>pulse, breathing rate, HRV, SpO₂, and sleep hours</strong> to verify whether your physical state
+              matches what you reported. Outcome:
+              <strong style="color:#22c55e;">🟢 Green</strong> stays strictly in your local vault ·
+              <strong style="color:#f59e0b;">🟡 Yellow</strong> <u>you decide</u> whether to transmit your summary to NASA Ground Control ·
+              <strong style="color:#ef4444;">🔴 Red</strong> activates the safety protocol with the Flight Surgeon.<br>
+              🖐️ <strong>Operating via gestures:</strong> dwell 1.2 s (☝️) over any PHQ-9 option 0–3, use ✌️ Two fingers on step 2 to run the 10 s biometric capture, and in a yellow state use 👍 Thumbs up to transmit or 👎 Thumbs down to keep private.
+            </div>
+
+            <div class="phq-done" id="phqDoneBanner" hidden>
+              <span id="phqDoneText">✔ Today's check-in completed.</span>
+              <button type="button" class="action-btn ghost" id="phqResetBtn" title="Demo only">↺ Repeat
+                today's test (demo)</button>
+            </div>
+
+            <div class="phq-stepper" id="phqStepper">
+              <div class="st active" data-step="1">01 · PHQ-9 Questionnaire</div>
+              <div class="st" data-step="2">02 · Biometric validation</div>
+              <div class="st" data-step="3">03 · Result &amp; downlink</div>
+            </div>
+
+            <!-- STEP 1: PHQ-9 -->
+            <div class="phq-step" id="phqStep1">
+              <p class="phq-intro">
+                Since your last check-in, <strong>how often have you been bothered by the following problems?</strong>
+                Answer honestly: nobody on Earth will view your answers without your consent (unless critical safety risk applies).
+              </p>
+              <ol class="phq-list" id="phqList"></ol>
+              <div class="phq-footer">
+                <span id="phqProgress">0 / 9 answered</span>
+                <button type="button" class="action-btn" id="phqToStep2" disabled>Continue to biometric validation
+                  →</button>
+              </div>
+            </div>
+
+            <!-- STEP 2: BIOMETRICS -->
+            <div class="phq-step" id="phqStep2" hidden>
+              <p class="phq-intro">
+                Rest calmly or anchor yourself and breathe normally. We will average <strong>10 seconds</strong> of your
+                heart rate and respiratory rate.
+                Without the biometric vest, use <em>“Measure pulse”</em> and <em>“Measure breathing”</em> before capturing.
+              </p>
+              <div id="phqVitals"></div>
+
+              <div class="ctx-grid">
+                <div class="ctx-box">Sleep hours (last night)<input type="number" id="phqSleep" step="0.1" min="0"
+                    max="14"></div>
+                <div class="ctx-box">Blood pressure<strong id="phqBp">--</strong></div>
+                <div class="ctx-box">Temperature<strong id="phqTemp">--</strong></div>
+                <div class="ctx-box">Personal baseline<strong id="phqBase">--</strong></div>
+              </div>
+
+              <div class="cap-progress">
+                <div id="phqCapBar"></div>
+              </div>
+              <div class="phq-footer">
+                <button type="button" class="action-btn ghost" id="phqBack1">← Back to questionnaire</button>
+                <span id="phqCapText" style="font-size:0.74rem;"></span>
+                <button type="button" class="action-btn" id="phqCaptureBtn">Capture biometrics (10 s) &amp;
+                  analyze</button>
+              </div>
+            </div>
+
+            <!-- STEP 3: RESULT -->
+            <div class="phq-step" id="phqStep3" hidden>
+              <div class="result-grid">
+                <div class="res-card" id="resPhqCard">
+                  <div class="res-label"><span>PHQ-9 // Reported Mood State</span><span class="lights"
+                      id="resPhqLights"></span></div>
+                  <div class="res-big" id="resPhqScore">--</div>
+                  <div class="res-sub" id="resPhqSev">--</div>
+                </div>
+                <div class="res-card" id="resPhysioCard">
+                  <div class="res-label"><span>Physiological Stress Index</span><span class="lights"
+                      id="resPhysioLights"></span></div>
+                  <div class="res-big" id="resPhysioIdx">--</div>
+                  <div id="resFactors" style="display:flex; flex-direction:column; gap:4px;"></div>
+                </div>
+                <div class="res-card" id="resCohCard">
+                  <div class="res-label"><span>Does mood match physical signals?</span></div>
+                  <div class="res-big" id="resCohPct">--</div>
+                  <div class="res-sub"><strong id="resCohLabel">--</strong><br><span id="resCohDetail"></span></div>
+                </div>
+              </div>
+
+              <div class="final-banner" id="finalBanner">
+                <div>
+                  <div style="font-size:0.66rem; opacity:0.85; letter-spacing:1px;">FINAL MOOD TRAFFIC LIGHT (PHQ-9 +
+                    BIOMETRICS)</div>
+                  <div class="final-title" id="finalTitle">--</div>
+                  <div class="final-msg" id="finalMsg"></div>
+                </div>
+                <div class="lights" id="finalLights"></div>
+              </div>
+
+              <div id="crisisBox"></div>
+              <div id="txPanel"></div>
+            </div>
+
+            <!-- HISTORY -->
+            <div class="sub-card-header" style="margin-top:0.4rem;">
+              <span>Mood Trend // Last 7 Check-Ins</span>
+              <span id="txCounter" style="font-size:0.7rem;"></span>
+            </div>
+            <div class="history-wrap">
+              <div class="trend-box">
+                <div class="trend-legend">
+                  <span><strong style="color:#38bdf8;">— PHQ-9 Mood</strong> · <strong style="color:#f472b6;">— Physiological load</strong></span>
+                  <span>Bands: green / yellow / red PHQ-9 zones</span>
+                </div>
+                <canvas id="phqTrend" width="520" height="150"></canvas>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>PHQ-9</th>
+                      <th>Physio</th>
+                      <th>Coherence</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="historyBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <p style="font-size:0.66rem; line-height:1.4; color:var(--green-mid);">
+              PHQ-9 © Pfizer Inc. (public domain). Severity levels: 0–4 Perfect · 5–9 Acceptable · 10–14 Sufficient · 15–19 Deficient · 20–27 (or item 9) Critical.
+              This check-in is a supportive self-care tool and does not replace clinical assessment by the Flight Surgeon or Behavioral Health &amp; Performance (BHP).
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Theme switch
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+
+    if (localStorage.getItem('orbitLightMode') === 'on') {
+      document.body.classList.add('light-mode');
+      themeToggle.setAttribute('aria-pressed', 'true');
+      themeLabel.textContent = 'Light: ON';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      themeToggle.setAttribute('aria-pressed', isLight);
+      themeLabel.textContent = isLight ? 'Light: ON' : 'Light: OFF';
+      localStorage.setItem('orbitLightMode', isLight ? 'on' : 'off');
+    });
+
+    // Local encrypted journal
+    const privateDiary = document.getElementById('privateDiary');
+    const saveDiaryBtn = document.getElementById('saveDiaryBtn');
+    const diaryFeedback = document.getElementById('diaryFeedback');
+
+    privateDiary.value = localStorage.getItem('orbitPrivateDiaryEmilio') || '';
+
+    saveDiaryBtn.addEventListener('click', () => {
+      localStorage.setItem('orbitPrivateDiaryEmilio', privateDiary.value);
+      diaryFeedback.textContent = '✔ Entry encrypted and saved locally.';
+      setTimeout(() => { diaryFeedback.textContent = 'Local encryption active.'; }, 3000);
+    });
+
+    // Breathing pacer
+    const breathCircle = document.getElementById('breathCircle');
+    const startBreathBtn = document.getElementById('startBreathBtn');
+    const stopBreathBtn = document.getElementById('stopBreathBtn');
+    let breathInterval = null;
+
+    startBreathBtn.addEventListener('click', () => {
+      if (breathInterval) return;
+      let state = 0;
+      const states = [
+        { text: 'INHALE (4s)', cls: 'inhale', time: 4000 },
+        { text: 'HOLD (7s)', cls: 'inhale', time: 7000 },
+        { text: 'EXHALE (8s)', cls: 'exhale', time: 8000 }
+      ];
+
+      function runBreathCycle() {
+        const current = states[state];
+        breathCircle.textContent = current.text;
+        breathCircle.className = 'breath-circle ' + current.cls;
+        breathInterval = setTimeout(() => {
+          state = (state + 1) % states.length;
+          runBreathCycle();
+        }, current.time);
+      }
+      runBreathCycle();
+    });
+
+    stopBreathBtn.addEventListener('click', () => {
+      clearTimeout(breathInterval);
+      breathInterval = null;
+      breathCircle.textContent = 'PAUSED';
+      breathCircle.className = 'breath-circle';
+    });
+  </script>
+
+  <script src="orbit-core.js"></script>
+  <script src="vitals-monitor.js"></script>
+  <script>
+    /* =====================================================================
+     *  DAILY MOOD CHECK-IN — PHQ-9 + BIOMETRIC VALIDATION + GROUND DOWNLINK
+     * ===================================================================== */
+    const $id = (id) => document.getElementById(id);
+    const LEVEL_TXT = { optimo: 'GREEN', precaucion: 'YELLOW', accion: 'RED' };
+    const TX_TXT = {
+      private: '🔒 Private',
+      pending: '⏳ Pending decision',
+      sent: '📡 Sent',
+      auto: '🚨 Protocol'
+    };
+
+    let answers = new Array(9).fill(null);
+    let phqVitals = null;
+    let currentEntry = null;
+    let transmitting = false;
+
+    const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function lightsHtml(level) {
+      return `<span class="light-dot green ${level === 'optimo' ? 'on' : ''}"></span>
+              <span class="light-dot yellow ${level === 'precaucion' ? 'on' : ''}"></span>
+              <span class="light-dot red ${level === 'accion' ? 'on' : ''}"></span>`;
+    }
+
+    function formatDate(key) {
+      const [y, m, d] = key.split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' });
+    }
+
+    // ---------- Navegación entre pasos ----------
+    function showStep(n) {
+      [1, 2, 3].forEach(i => { $id(`phqStep${i}`).hidden = i !== n; });
+      document.querySelectorAll('#phqStepper .st').forEach(el => {
+        const s = Number(el.dataset.step);
+        el.classList.toggle('active', s === n);
+        el.classList.toggle('done', s < n);
+      });
+      if (n === 2) enterStep2();
+    }
+
+    // ---------- PASO 1: Cuestionario ----------
+    function renderPhqList() {
+      $id('phqList').innerHTML = OrbitCore.PHQ9_ITEMS.map((q, i) => `
+        <li class="phq-item" data-i="${i}">
+          <div class="phq-q"><span class="phq-num">${String(i + 1).padStart(2, '0')}</span><span>${q}</span></div>
+          <div class="phq-opts">
+            ${OrbitCore.PHQ_OPTIONS.map(o => `
+              <label class="phq-opt">
+                <input type="radio" name="phq${i}" value="${o.value}">
+                <span>${o.label}<em>${o.value}</em></span>
+              </label>`).join('')}
+          </div>
+        </li>`).join('');
+    }
+
+    $id('phqList').addEventListener('change', (e) => {
+      if (!e.target.name || !e.target.name.startsWith('phq')) return;
+      const i = Number(e.target.name.replace('phq', ''));
+      answers[i] = Number(e.target.value);
+      const li = e.target.closest('.phq-item');
+      li.classList.add('answered');
+      li.classList.toggle('risk', i === 8 && answers[i] > 0);
+      const done = answers.filter(a => a !== null).length;
+      $id('phqProgress').textContent = `${done} / 9 answered`;
+      $id('phqToStep2').disabled = done < 9;
+    });
+
+    $id('phqToStep2').addEventListener('click', () => showStep(2));
+    $id('phqBack1').addEventListener('click', () => showStep(1));
+
+    // ---------- STEP 2: Biometrics ----------
+    function enterStep2() {
+      const st = OrbitCore.getState();
+      const m = st.latestMetrics;
+      $id('phqSleep').value = m.sleep;
+      $id('phqBp').textContent = `${m.bpSys}/${m.bpDia} mmHg`;
+      $id('phqTemp').textContent = `${m.temp} °C`;
+      $id('phqBase').textContent = `${st.profile.baseHr} bpm · HRV ${st.profile.baseHrv} ms`;
+      $id('phqCapBar').style.width = '0%';
+      $id('phqCapText').textContent = '';
+      if (!phqVitals) phqVitals = OrbitVitals.mount($id('phqVitals'), { hideSave: true });
+      else phqVitals.resize();
+    }
+
+    $id('phqCaptureBtn').addEventListener('click', async () => {
+      const btn = $id('phqCaptureBtn');
+      btn.disabled = true;
+      $id('phqBack1').disabled = true;
+      $id('phqCapText').textContent = 'Capturing signals… remain still at rest.';
+      const v = await phqVitals.capture(10, p => {
+        $id('phqCapBar').style.width = `${Math.round(p * 100)}%`;
+      });
+      btn.disabled = false;
+      $id('phqBack1').disabled = false;
+      analyze(v);
+    });
+
+    // ---------- Cross-Validation PHQ-9 <-> Physiology ----------
+    function analyze(v) {
+      const st = OrbitCore.getState();
+      const sleep = Number($id('phqSleep').value) || st.latestMetrics.sleep;
+      const metrics = { ...st.latestMetrics, hr: v.hr, respRate: v.rr, hrv: v.hrv, spo2: v.spo2, sleep };
+
+      const phq = OrbitCore.scorePHQ9(answers);
+      const physio = OrbitCore.computePhysioStress(metrics, st.profile);
+      const coh = OrbitCore.evaluateMoodCoherence(phq, physio);
+
+      const entry = {
+        date: OrbitCore.todayKey(),
+        ts: Date.now(),
+        answers: [...answers],
+        score: phq.score,
+        severity: phq.severity,
+        phqLevel: phq.level,
+        item9: phq.item9,
+        vitals: {
+          hr: v.hr, rr: v.rr, hrv: v.hrv, spo2: v.spo2, sleep,
+          bpSys: metrics.bpSys, bpDia: metrics.bpDia, temp: metrics.temp, source: v.source
+        },
+        physio,
+        coherence: { code: coh.code, label: coh.label, detail: coh.detail, pct: coh.pct, levelWord: coh.levelWord },
+        finalLevel: coh.finalLevel,
+        transmission: {
+          status: coh.finalLevel === 'accion' ? 'auto' : coh.finalLevel === 'precaucion' ? 'pending' : 'private'
+        }
+      };
+
+      OrbitCore.updateState(s => {
+        s.moodLog = (s.moodLog || []).filter(e => e.date !== entry.date);
+        s.moodLog.push(entry);
+        if (s.moodLog.length > 30) s.moodLog = s.moodLog.slice(-30);
+        // Captured readings also sync back to the main dashboard
+        s.latestMetrics.hr = v.hr;
+        s.latestMetrics.respRate = v.rr;
+        s.latestMetrics.hrv = v.hrv;
+        s.latestMetrics.spo2 = v.spo2;
+        s.latestMetrics.sleep = sleep;
+        return s;
+      });
+
+      currentEntry = entry;
+      renderResult(entry);
+      showStep(3);
+      renderDoneBanner();
+      renderHistory();
+
+      // Red zone: safety protocol (minimal automatic alert)
+      if (entry.finalLevel === 'accion') {
+        transmit({ score: true, answers: false, vitals: true, note: false }, '', true);
+      }
+    }
+
+    // ---------- STEP 3: Result ----------
+    function renderResult(e) {
+      const sevWord = OrbitCore.phqSeverityLabel(e.score, e.item9);
+      $id('resPhqCard').className = `res-card ${e.phqLevel}`;
+      $id('resPhqLights').innerHTML = lightsHtml(e.phqLevel);
+      $id('resPhqScore').innerHTML = `${sevWord}<small> (${e.score}/27)</small>`;
+      $id('resPhqSev').innerHTML = `Severity level: <strong>${sevWord}</strong> on PHQ-9 scale.<br> ` +
+        `${e.item9 > 0 ? '<span style="color:#ef4444;">⚠ Positive response on item 9.</span>' : 'No self-harm risk indicators on item 9.'}`;
+
+      const ph = e.physio;
+      const stressWord = ph.severityWord || OrbitCore.stressSeverityWord(ph.index);
+      $id('resPhysioCard').className = `res-card ${ph.level}`;
+      $id('resPhysioLights').innerHTML = lightsHtml(ph.level);
+      $id('resPhysioIdx').innerHTML = `${stressWord}<small> (bodily load)</small>`;
+      $id('resFactors').innerHTML = (ph.factors || []).map(f => {
+        const pct = Math.round((f.points / f.max) * 100);
+        const fWord = f.levelWord || OrbitCore.factorSeverityWord(pct);
+        const color = pct >= 60 ? '#ef4444' : pct > 0 ? '#f59e0b' : '#22c55e';
+        return `<div class="factor-row" title="${escapeHtml(f.value)} · Level: ${fWord}">` +
+          `<span>${f.name}: <strong style="color:var(--green-bright);">${escapeHtml(f.value)}</strong> · <em>${fWord}</em></span>` +
+          `<div class="factor-bar"><div style="width:${Math.max(4, pct)}%; background:${color};"></div></div>` +
+          `</div>`;
+      }).join('');
+
+      const cohLevel = e.coherence.code === 'coherente' ? 'optimo' : 'precaucion';
+      const cohWord = e.coherence.levelWord || OrbitCore.coherenceWordFromScore(e.coherence.pct);
+      $id('resCohCard').className = `res-card ${cohLevel}`;
+      $id('resCohPct').innerHTML = `${cohWord}<small> coherence</small>`;
+      $id('resCohLabel').textContent = e.coherence.label;
+      $id('resCohDetail').textContent = e.coherence.detail;
+
+      const fb = $id('finalBanner');
+      fb.className = `final-banner ${e.finalLevel}`;
+      $id('finalLights').innerHTML = lightsHtml(e.finalLevel);
+      const titles = {
+        optimo: 'GREEN // MOOD STABLE',
+        precaucion: 'YELLOW // MOOD CAUTION',
+        accion: 'RED // PRIORITY SUPPORT'
+      };
+      const msgs = {
+        optimo: 'Your reported mood and bodily biometrics are aligned within baseline. Maintain your sleep, ARED exercise, and crew connection routines.',
+        precaucion: e.coherence.code === 'subreporte' && e.phqLevel === 'optimo'
+          ? 'Your questionnaire scored low, yet your biometrics reflect physiological strain. The traffic light shifts to yellow: take time for 4-7-8 breathing and decide whether to notify Ground Control.'
+          : 'Mild-to-moderate symptoms detected. Recommended: 4-7-8 breathing, peer check-in with a trusted crewmate, and 480 nm light therapy. You decide whether to share this data with Ground Control.',
+        accion: 'Results indicate you need clinical support today. The safety protocol has been initiated so the Flight Surgeon and BHP team can reach out privately.'
+      };
+      $id('finalTitle').textContent = titles[e.finalLevel];
+      $id('finalMsg').textContent = msgs[e.finalLevel];
+
+      $id('crisisBox').innerHTML = e.item9 > 0 ? `
+        <div class="crisis-box">
+          <strong>💬 You are not alone.</strong> You indicated thoughts of self-harm or being better off dead.
+          This is a clinical priority, never a personal failure or grounds for sanction. Reach out immediately to a trusted crewmate,
+          do not isolate yourself, and open the encrypted Flight Surgeon channel (<em>${escapeHtml(OrbitCore.getState().profile.emergencyProtocol)}</em>).
+        </div>` : '';
+
+      renderTxPanel(e);
+    }
+
+    // ---------- Ground Downlink Consent & Transmission Panel ----------
+    function buildPayload(e, sel, note) {
+      const st = OrbitCore.getState();
+      const env = OrbitCore.ENVIRONMENTS[st.environment] || OrbitCore.ENVIRONMENTS.station;
+      const p = {
+        destination: 'NASA JSC // Mission Control – Flight Surgeon & BHP',
+        crew_member: st.profile.crewName,
+        date: e.date,
+        environment: env.name,
+        status_light: LEVEL_TXT[e.finalLevel]
+      };
+      if (sel.score) p.phq9 = { score: e.score, severity: e.severity, item9_risk: e.item9 > 0 };
+      if (sel.answers) p.responses = OrbitCore.PHQ9_ITEMS.map((q, i) => ({ question: i + 1, value: e.answers ? e.answers[i] : null }));
+      if (sel.vitals) p.biometrics = {
+        hr_bpm: e.vitals.hr, rr_brpm: e.vitals.rr, hrv_ms: e.vitals.hrv, spo2: e.vitals.spo2,
+        sleep_h: e.vitals.sleep, physio_load: e.physio.severityWord || OrbitCore.stressSeverityWord(e.physio.index),
+        coherence: `${e.coherence.label} (${e.coherence.levelWord || OrbitCore.coherenceWordFromScore(e.coherence.pct)})`
+      };
+      if (sel.note && note.trim()) p.crew_note = note.trim();
+      return p;
+    }
+
+    function renderTxPanel(e) {
+      const panel = $id('txPanel');
+      const st = OrbitCore.getState();
+      const env = OrbitCore.ENVIRONMENTS[st.environment] || OrbitCore.ENVIRONMENTS.station;
+      const t = e.transmission || { status: 'private' };
+
+      if (t.status === 'sent' || (t.status === 'auto' && t.packetId)) {
+        panel.innerHTML = `
+          <div class="tx-panel ${t.status === 'auto' ? 'crit' : ''}">
+            <h4>${t.status === 'auto' ? '🚨 Safety protocol transmitted' : '📡 Data transmitted to NASA Ground Control'}</h4>
+            <div>Packet <strong>${t.packetId}</strong> acknowledged by Mission Control at ${new Date(t.ts).toLocaleTimeString('en-US')}.
+              Shared fields: <strong>${(t.fields || []).join(', ') || '—'}</strong>.</div>
+            <div class="tx-meta">Flight Surgeon / BHP Operational Psychology will reply over the encrypted private channel. Estimated comm delay: ${env.commDelay}.</div>
+          </div>`;
+        return;
+      }
+
+      if (t.status === 'auto') {
+        panel.innerHTML = `<div class="tx-panel crit"><h4>🚨 Initiating safety downlink protocol…</h4><ul class="tx-log" id="txLog"></ul>
+          <div class="cap-progress"><div id="txBar"></div></div></div>`;
+        return;
+      }
+
+      const isPending = t.status === 'pending';
+      const isYellow = e.finalLevel === 'precaucion';
+      const showForm = isPending || panel.dataset.voluntary === '1';
+
+      if (!showForm) {
+        panel.innerHTML = `
+          <div class="tx-panel">
+            <h4>🔒 Your data remains in the local encrypted vault</h4>
+            <div>${isYellow
+            ? 'You chose <strong>not to transmit</strong> today\'s check-in. You may change your mind at any time.'
+            : 'Green status: nothing is sent to Earth. If you still wish to share how you are doing, you can send it voluntarily.'}</div>
+            <div class="tx-actions">
+              <button type="button" class="action-btn" id="txOpenForm">${isYellow ? '📡 Change decision & send' : '📡 Share voluntarily'}</button>
+            </div>
+          </div>`;
+        $id('txOpenForm').addEventListener('click', () => { panel.dataset.voluntary = '1'; renderTxPanel(e); });
+        return;
+      }
+
+      panel.innerHTML = `
+        <div class="tx-panel ${isYellow ? 'warn' : ''}">
+          <h4>${isYellow ? '🟡 Do you want to transmit your data to NASA Ground Control?' : '📡 Share voluntarily with Ground Control'}</h4>
+          <div>${isYellow
+            ? 'Your result is in the <strong>yellow traffic-light zone</strong> (moderate state). Sharing allows the Flight Surgeon and BHP team to offer early support. <strong>The choice is yours</strong> and will not automatically affect flight assignment.'
+            : 'Choose which fields to include.'}</div>
+          <div class="tx-checks">
+            <label><input type="checkbox" id="selScore" checked> PHQ-9 score &amp; severity level</label>
+            <label><input type="checkbox" id="selVitals" checked> Biometrics (pulse, breathing, HRV, sleep)</label>
+            <label><input type="checkbox" id="selAnswers"> Detailed per-question answers</label>
+            <label><input type="checkbox" id="selNote"> Attach a personal note</label>
+          </div>
+          <textarea class="tx-note" id="txNote" rows="2" placeholder="Optional note for the Flight Surgeon…" hidden></textarea>
+          <div class="tx-meta">Exact preview of the AES-256 encrypted packet ready for downlink:</div>
+          <pre class="tx-preview" id="txPreview"></pre>
+          <div class="tx-meta">Link: ${env.name} → Earth · One-way/relay delay: ${env.commDelay}</div>
+          <ul class="tx-log" id="txLog"></ul>
+          <div class="cap-progress" id="txBarWrap" hidden><div id="txBar"></div></div>
+          <div class="tx-actions">
+            <button type="button" class="action-btn ghost" id="txKeepPrivate">🔒 Do not send, keep private</button>
+            <button type="button" class="action-btn" id="txSend">📡 Transmit to Earth</button>
+          </div>
+        </div>`;
+
+      const sel = () => ({
+        score: $id('selScore').checked,
+        vitals: $id('selVitals').checked,
+        answers: $id('selAnswers').checked,
+        note: $id('selNote').checked
+      });
+      const updatePreview = () => {
+        $id('txNote').hidden = !$id('selNote').checked;
+        $id('txPreview').textContent = JSON.stringify(buildPayload(e, sel(), $id('txNote').value), null, 2);
+        const s = sel();
+        $id('txSend').disabled = !(s.score || s.vitals || s.answers || (s.note && $id('txNote').value.trim()));
+      };
+      ['selScore', 'selVitals', 'selAnswers', 'selNote'].forEach(id => $id(id).addEventListener('change', updatePreview));
+      $id('txNote').addEventListener('input', updatePreview);
+      updatePreview();
+
+      $id('txKeepPrivate').addEventListener('click', () => {
+        panel.dataset.voluntary = '0';
+        setTransmission(e, { status: 'private', ts: Date.now() });
+      });
+      $id('txSend').addEventListener('click', () => transmit(sel(), $id('txNote').value, false));
+    }
+
+    function setTransmission(e, tx) {
+      OrbitCore.updateState(s => {
+        const entry = (s.moodLog || []).find(x => x.date === e.date);
+        if (entry) entry.transmission = tx;
+        return s;
+      });
+      e.transmission = tx;
+      renderTxPanel(e);
+      renderHistory();
+    }
+
+    /** Simulates TDRS / Deep Space Network downlink using current mission environment latency. */
+    function transmit(selection, note, auto) {
+      if (transmitting || !currentEntry) return;
+      transmitting = true;
+      const e = currentEntry;
+      const st = OrbitCore.getState();
+      const env = OrbitCore.ENVIRONMENTS[st.environment] || OrbitCore.ENVIRONMENTS.station;
+      const total = env.uplinkMs || 3000;
+      const payload = buildPayload(e, selection, note);
+      const packetId = `OC-${e.date.replace(/-/g, '')}-${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
+
+      if (auto) renderTxPanel(e);
+      const log = $id('txLog');
+      const barWrap = $id('txBarWrap');
+      if (barWrap) barWrap.hidden = false;
+      ['txSend', 'txKeepPrivate'].forEach(id => { if ($id(id)) $id(id).disabled = true; });
+
+      const stages = [
+        { at: 0.0,  txt: `Packaging & encrypting telemetry packet ${packetId} (AES-256)…` },
+        { at: 0.25, txt: `Locking relay link (${env.id === 'station' ? 'TDRS' : 'Deep Space Network'})…` },
+        { at: 0.55, txt: 'Transmitting to Mission Control (JSC Houston)…' },
+        { at: 0.85, txt: 'Awaiting Flight Surgeon acknowledgment…' }
+      ];
+      stages.forEach(sg => setTimeout(() => {
+        if (log) log.insertAdjacentHTML('beforeend', `<li>› ${sg.txt}</li>`);
+      }, sg.at * total));
+
+      const start = performance.now();
+      const barTimer = setInterval(() => {
+        const p = Math.min(1, (performance.now() - start) / total);
+        const bar = $id('txBar');
+        if (bar) bar.style.width = `${Math.round(p * 100)}%`;
+      }, 120);
+
+      setTimeout(() => {
+        clearInterval(barTimer);
+        const fields = [];
+        if (selection.score) fields.push('PHQ-9');
+        if (selection.vitals) fields.push('biometrics');
+        if (selection.answers) fields.push('responses');
+        if (selection.note && note.trim()) fields.push('note');
+        const tx = { status: auto ? 'auto' : 'sent', ts: Date.now(), packetId, fields };
+        OrbitCore.updateState(s => {
+          s.groundTransmissions = s.groundTransmissions || [];
+          s.groundTransmissions.push({ packetId, ts: tx.ts, auto, payload });
+          if (s.groundTransmissions.length > 50) s.groundTransmissions = s.groundTransmissions.slice(-50);
+          return s;
+        });
+        transmitting = false;
+        setTransmission(e, tx);
+      }, total + 200);
+    }
+
+    // ---------- "Completed today" state ----------
+    function renderDoneBanner() {
+      const today = OrbitCore.getTodayMoodEntry();
+      const done = today && !today.seed;
+      $id('phqDoneBanner').hidden = !done;
+      if (done) {
+        const now = new Date();
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        const mins = Math.round((tomorrow - now) / 60000);
+        $id('phqDoneText').innerHTML = `✔ Today's check-in completed at ${new Date(today.ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}.
+          Next check-in available in <strong>${Math.floor(mins / 60)} h ${mins % 60} min</strong>.`;
+      }
+    }
+
+    $id('phqResetBtn').addEventListener('click', () => {
+      OrbitCore.updateState(s => {
+        s.moodLog = (s.moodLog || []).filter(e => e.date !== OrbitCore.todayKey());
+        return s;
+      });
+      answers = new Array(9).fill(null);
+      currentEntry = null;
+      $id('txPanel').dataset.voluntary = '0';
+      renderPhqList();
+      $id('phqProgress').textContent = '0 / 9 answered';
+      $id('phqToStep2').disabled = true;
+      renderDoneBanner();
+      renderHistory();
+      showStep(1);
+    });
+
+    // ---------- History + Trend Chart ----------
+    function renderHistory() {
+      const st = OrbitCore.getState();
+      const log = [...(st.moodLog || [])].sort((a, b) => a.date.localeCompare(b.date)).slice(-7);
+
+      $id('historyBody').innerHTML = [...log].reverse().map(e => {
+        const sevW = OrbitCore.phqSeverityLabel(e.score, e.item9);
+        const physW = e.physio ? (e.physio.severityWord || OrbitCore.stressSeverityWord(e.physio.index)) : '—';
+        const cohW = e.coherence ? (e.coherence.levelWord || OrbitCore.coherenceWordFromScore(e.coherence.pct)) : '—';
+        return `
+        <tr>
+          <td>${formatDate(e.date)}${e.seed ? ' <span style="opacity:.6">(demo)</span>' : ''}</td>
+          <td>${sevW} <span style="opacity:.7">(${e.score}/27)</span></td>
+          <td>${physW}</td>
+          <td>${cohW}</td>
+          <td><span class="tag ${e.finalLevel}">${LEVEL_TXT[e.finalLevel]}</span></td>
+          <td>${TX_TXT[(e.transmission || {}).status] || '—'}</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="6">No records yet.</td></tr>';
+
+      const sent = (st.groundTransmissions || []).length;
+      $id('txCounter').textContent = `PACKETS SENT TO EARTH: ${sent}`;
+
+      drawTrend(log);
+    }
+
+    function drawTrend(log) {
+      const c = $id('phqTrend');
+      const dpr = window.devicePixelRatio || 1;
+      const W = c.clientWidth || 520, H = 150;
+      c.width = W * dpr; c.height = H * dpr;
+      const ctx = c.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+
+      const top = 8, bottom = H - 20, padX = 30;
+      const yOf = (norm) => bottom - norm * (bottom - top);
+
+      // Franjas del semáforo (eje PHQ 0–27)
+      const bands = [
+        { from: 0, to: 5, color: 'rgba(34,197,94,0.10)' },
+        { from: 5, to: 15, color: 'rgba(245,158,11,0.10)' },
+        { from: 15, to: 27, color: 'rgba(239,68,68,0.10)' }
+      ];
+      bands.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.fillRect(padX, yOf(b.to / 27), W - padX * 2, yOf(b.from / 27) - yOf(b.to / 27));
+      });
+      ctx.fillStyle = '#64748b';
+      ctx.font = '9px Consolas, monospace';
+      ctx.textAlign = 'right';
+      [0, 5, 15, 27].forEach(v => ctx.fillText(String(v), padX - 4, yOf(v / 27) + 3));
+
+      if (!log.length) return;
+      const stepX = (W - padX * 2) / Math.max(1, log.length - 1);
+      const plot = (vals, color) => {
+        ctx.strokeStyle = color; ctx.lineWidth = 2;
+        ctx.beginPath();
+        vals.forEach((v, i) => {
+          const x = log.length === 1 ? W / 2 : padX + i * stepX;
+          if (i === 0) ctx.moveTo(x, yOf(v)); else ctx.lineTo(x, yOf(v));
+        });
+        ctx.stroke();
+        vals.forEach((v, i) => {
+          const x = log.length === 1 ? W / 2 : padX + i * stepX;
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.arc(x, yOf(v), 3.2, 0, Math.PI * 2); ctx.fill();
+        });
+      };
+      plot(log.map(e => Math.min(1, e.score / 27)), '#38bdf8');
+      plot(log.map(e => Math.min(1, (e.physio ? e.physio.index : 0) / 100)), '#f472b6');
+
+      ctx.fillStyle = '#28c76f';
+      ctx.textAlign = 'center';
+      log.forEach((e, i) => {
+        const x = log.length === 1 ? W / 2 : padX + i * stepX;
+        ctx.fillText(e.date.slice(5), x, H - 5);
+      });
+    }
+
+    window.addEventListener('resize', () => renderHistory());
+
+    // ---------- Inicialización ----------
+    const gestureHudO1 = OrbitCore.initGestureHUD({
+      containerId: 'gestureHudHostO1',
+      context: 'opcion1',
+      onGesture: (g) => {
+        if (g === 'next' && !$id('phqStep1').hidden && !$id('phqToStep2').disabled) {
+          showStep(2);
+        } else if (g === 'prev' && !$id('phqStep2').hidden) {
+          showStep(1);
+        } else if (g === 'approve') {
+          const sendBtn = $id('txSend');
+          if (sendBtn && !sendBtn.disabled) sendBtn.click();
+        } else if (g === 'reject') {
+          const keepBtn = $id('txKeepPrivate');
+          if (keepBtn) keepBtn.click();
+        } else if (g === 'release') {
+          $id('stopBreathBtn').click();
+        }
+      }
+    });
+
+    $id('phqDateBadge').textContent = `TODAY: ${formatDate(OrbitCore.todayKey()).toUpperCase()}`;
+    renderPhqList();
+    renderHistory();
+    renderDoneBanner();
+
+    const todayEntry = OrbitCore.getTodayMoodEntry();
+    if (todayEntry && !todayEntry.seed) {
+      currentEntry = todayEntry;
+      renderResult(todayEntry);
+      showStep(3);
+      // Si el protocolo rojo quedó interrumpido (p. ej. se cerró la página), reanudarlo
+      if (todayEntry.transmission && todayEntry.transmission.status === 'auto' && !todayEntry.transmission.packetId) {
+        transmit({ score: true, answers: false, vitals: true, note: false }, '', true);
+      }
+    } else {
+      showStep(1);
+    }
+  </script>
+</body>
+
+</html>

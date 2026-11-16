@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbit Care // Crew Biomedical Dossier</title>
+  <style>
+    :root {
+      --bg-void: #020704;
+      --bg-panel: #041109;
+      --bg-panel-alt: #06190e;
+      --bg-card: rgba(4, 17, 9, 0.88);
+      --bg-subpanel: rgba(2, 10, 5, 0.92);
+      --bg-frame: radial-gradient(circle at center, rgba(6, 28, 16, 0.55) 0%, rgba(2, 7, 4, 0.95) 100%);
+      --header-grad: linear-gradient(90deg, rgba(104, 255, 155, 0.12) 0%, rgba(4, 17, 9, 0.9) 65%);
+      --grid-line: rgba(40, 199, 111, 0.04);
+      --dot-color: rgba(104, 255, 155, 0.12);
+      --green-bright: #68ff9b;
+      --green-mid: #28c76f;
+      --green-dim: #114b2b;
+      --green-border: #1b6b3e;
+      --privacy-accent: #38bdf8;
+      --privacy-bg: rgba(56, 189, 248, 0.12);
+      --text-shadow-glow: 0 0 8px rgba(104, 255, 155, 0.7);
+      --glow-soft: 0 0 10px rgba(104, 255, 155, 0.25);
+      --glow-strong: 0 0 14px rgba(104, 255, 155, 0.55);
+      --inset-shadow: inset 0 0 30px rgba(17, 75, 43, 0.35);
+    }
+
+    body.light-mode {
+      --bg-void: #e6f4ec;
+      --bg-panel: #f4fbf7;
+      --bg-panel-alt: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-subpanel: rgba(238, 249, 243, 0.96);
+      --bg-frame: radial-gradient(circle at center, rgba(235, 250, 241, 0.85) 0%, rgba(214, 238, 224, 0.95) 100%);
+      --header-grad: linear-gradient(90deg, rgba(22, 163, 74, 0.15) 0%, rgba(244, 251, 247, 0.95) 65%);
+      --grid-line: rgba(16, 122, 63, 0.07);
+      --dot-color: rgba(16, 122, 63, 0.16);
+      --green-bright: #0d6e38;
+      --green-mid: #16a34a;
+      --green-dim: #bbf7d0;
+      --green-border: #52b788;
+      --privacy-accent: #0369a1;
+      --privacy-bg: rgba(3, 105, 161, 0.12);
+      --text-shadow-glow: none;
+      --glow-soft: 0 2px 8px rgba(13, 110, 56, 0.12);
+      --glow-strong: 0 4px 12px rgba(13, 110, 56, 0.22);
+      --inset-shadow: inset 0 0 20px rgba(82, 183, 136, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--green-bright);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 14px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hud-frame {
+      flex: 1;
+      border: 1px solid var(--green-border);
+      background: var(--bg-frame);
+      box-shadow: inset 0 0 25px rgba(40, 199, 111, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      gap: 14px;
+      position: relative;
+    }
+
+    /* Barra superior */
+    .navbar {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--green-border);
+      border-top: 2px solid var(--green-bright);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: var(--glow-soft);
+      position: relative;
+    }
+
+    .navbar::after {
+      content: "CREW.PROFILE // BIOMEDICAL DOSSIER";
+      position: absolute;
+      bottom: -14px;
+      right: 12px;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--green-mid);
+      background-color: var(--bg-void);
+      padding: 0 6px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--green-bright);
+      background-color: rgba(104, 255, 155, 0.18);
+      color: var(--green-bright);
+      text-decoration: none;
+      box-shadow: var(--glow-strong);
+      position: relative;
+    }
+
+    .profile-link svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .nav-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background-color: var(--bg-panel-alt);
+      color: var(--green-bright);
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid var(--green-border);
+      border-left: 3px solid var(--green-bright);
+      font-size: 0.88rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(40, 199, 111, 0.15);
+      border-color: var(--green-bright);
+      box-shadow: var(--glow-soft);
+    }
+
+    .nav-btn.privacy-nav {
+      border-left-color: var(--privacy-accent);
+      color: var(--privacy-accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--green-border);
+      color: var(--green-bright);
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: var(--glow-soft);
+    }
+
+    .toggle-track {
+      width: 36px;
+      height: 18px;
+      border: 1px solid var(--green-bright);
+      background-color: var(--bg-void);
+      position: relative;
+      display: inline-block;
+    }
+
+    .toggle-thumb {
+      width: 12px;
+      height: 12px;
+      background-color: var(--green-mid);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.25s ease;
+    }
+
+    body.light-mode .toggle-thumb {
+      transform: translateX(18px);
+      background-color: var(--green-bright);
+    }
+
+    .brand-container {
+      background-color: var(--bg-panel-alt);
+      padding: 0.5rem 1.35rem;
+      border: 1px solid var(--green-bright);
+      border-right: 4px solid var(--green-bright);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      text-shadow: var(--text-shadow-glow);
+      box-shadow: var(--glow-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-indicator {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-bright);
+      box-shadow: 0 0 8px var(--green-bright);
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    /* Contenido principal */
+    .main-content {
+      flex: 1;
+      display: flex;
+      padding-top: 6px;
+    }
+
+    .stats-card {
+      width: 100%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--green-border);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: var(--inset-shadow);
+    }
+
+    .corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--green-bright);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .stats-header {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--green-border);
+      background: var(--header-grad);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stats-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: var(--text-shadow-glow);
+    }
+
+    .profile-grid {
+      flex: 1;
+      padding: 1.25rem;
+      background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 1.25rem;
+    }
+
+    .sub-card {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-subpanel);
+      box-shadow: var(--inset-shadow);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .sub-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--green-border);
+      padding-bottom: 0.5rem;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* Identidad del astronauta */
+    .crew-identity {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem;
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+    }
+
+    .crew-avatar {
+      width: 72px;
+      height: 72px;
+      border: 1px solid var(--green-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(104, 255, 155, 0.18), transparent);
+      flex-shrink: 0;
+    }
+
+    .crew-avatar svg {
+      width: 40px;
+      height: 40px;
+      fill: currentColor;
+    }
+
+    .crew-meta h3 {
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .crew-meta p {
+      font-size: 0.78rem;
+      color: var(--green-mid);
+      line-height: 1.4;
+    }
+
+    /* Campos editables */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .field-group label {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--green-mid);
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--green-border);
+      border-left: 3px solid var(--green-mid);
+      color: var(--green-bright);
+      padding: 0.5rem 0.65rem;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      border-color: var(--green-bright);
+      border-left-color: var(--green-bright);
+    }
+
+    .save-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    .action-btn {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--green-bright);
+      color: var(--green-bright);
+      padding: 0.55rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: var(--glow-soft);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: rgba(104, 255, 155, 0.18);
+      box-shadow: var(--glow-strong);
+    }
+
+    .save-feedback {
+      font-size: 0.75rem;
+      color: var(--green-mid);
+    }
+
+    /* Tabla de registros recientes */
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .log-table th,
+    .log-table td {
+      border: 1px solid var(--green-border);
+      padding: 0.5rem 0.6rem;
+      text-align: left;
+    }
+
+    .log-table th {
+      background-color: var(--bg-panel-alt);
+      color: var(--green-mid);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 960px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-frame">
+    <!-- Barra superior -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="usuario.html" class="profile-link" title="User profile" aria-label="User profile">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+
+        <nav class="nav-options">
+          <a href="main.html" class="nav-btn">Main Dashboard</a>
+          <a href="opcion1.html" class="nav-btn privacy-nav">Private Space</a>
+          <a href="opcion2.html" class="nav-btn">Countermeasures & EVA</a>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span id="themeLabel">Light: OFF</span>
+        </button>
+
+        <div class="brand-container">
+          <span class="brand-indicator"></span>
+          <span>Orbit Care</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <section class="stats-card">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="stats-header">
+          <h2>Crew Biomedical Dossier</h2>
+          <span style="font-size: 0.78rem; letter-spacing: 1px;">CREW-ID: AST-04</span>
+        </div>
+
+        <form class="profile-grid" id="profileForm">
+          <!-- Left Column: Mission Data & Anthropometry -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span>Crew Member Data</span>
+              <span>ACTIVE IN ORBIT</span>
+            </div>
+
+            <div class="crew-identity">
+              <div class="crew-avatar">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+                </svg>
+              </div>
+              <div class="crew-meta">
+                <h3 id="displayCrewName">Commander / Mission Specialist</h3>
+                <p>Module: Alpha Orbital Station Habitat<br>Days in Microgravity: <strong>114 days</strong></p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="crewName">Full Name</label>
+                <input type="text" id="crewName" value="Emilio Hernandez Landa">
+              </div>
+              <div class="field-group">
+                <label for="crewRole">Mission Role</label>
+                <input type="text" id="crewRole" value="Systems & EVA Engineer">
+              </div>
+              <div class="field-group">
+                <label for="bloodType">Blood Type</label>
+                <select id="bloodType">
+                  <option value="O+" selected>O+ (Universal)</option>
+                  <option value="O-">O-</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="AB+">AB+</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="bodyMass">Baseline Body Mass (kg)</label>
+                <input type="number" id="bodyMass" step="0.1" value="72.5">
+              </div>
+              <div class="field-group">
+                <label for="heightCm">Earth Height (cm)</label>
+                <input type="number" id="heightCm" value="176">
+              </div>
+              <div class="field-group">
+                <label for="allergies">Allergies / Sensitivities</label>
+                <input type="text" id="allergies" value="None recorded">
+              </div>
+              <div class="field-group full">
+                <label for="medicalNotes">Cabin Medical Notes</label>
+                <textarea id="medicalNotes" rows="2">Vestibular adaptation complete. No cardiovascular history.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Physiological Baseline (For AI Assistant Calibration) -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span>Physiological Baseline (AI Calibration)</span>
+              <span>THRESHOLDS</span>
+            </div>
+
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="baseHr">Resting Heart Rate (bpm)</label>
+                <input type="number" id="baseHr" value="58">
+              </div>
+              <div class="field-group">
+                <label for="baseHrv">Nominal HRV (ms)</label>
+                <input type="number" id="baseHrv" value="68">
+              </div>
+              <div class="field-group">
+                <label for="baseSpo2">Nominal SpO₂ Saturation (%)</label>
+                <input type="number" id="baseSpo2" value="98">
+              </div>
+              <div class="field-group">
+                <label for="sleepTarget">24h Cycle Sleep Target (hrs)</label>
+                <input type="number" id="sleepTarget" step="0.5" value="7.5">
+              </div>
+              <div class="field-group">
+                <label for="co2Limit">Cabin CO₂ Alert Threshold (%)</label>
+                <input type="number" id="co2Limit" step="0.05" value="0.65">
+              </div>
+              <div class="field-group">
+                <label for="emergencyProtocol">Ground Medical Contact</label>
+                <input type="text" id="emergencyProtocol" value="Flight Surgeon // Encrypted Channel 02">
+              </div>
+            </div>
+
+            <div class="sub-card-header" style="margin-top: 0.4rem;">
+              <span>Recent Evaluation Log</span>
+            </div>
+
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th>Cycle</th>
+                  <th>Triage Status</th>
+                  <th>SC-16 Integrity</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SOL-114</td>
+                  <td>OPTIMAL</td>
+                  <td>Perfect</td>
+                  <td>No muscular strain</td>
+                </tr>
+                <tr>
+                  <td>SOL-113</td>
+                  <td>CAUTION</td>
+                  <td>Acceptable</td>
+                  <td>Mild right-shoulder fatigue post-EVA</td>
+                </tr>
+                <tr>
+                  <td>SOL-112</td>
+                  <td>OPTIMAL</td>
+                  <td>Perfect</td>
+                  <td>Restorative sleep (7.8 h)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="save-bar">
+              <span class="save-feedback" id="saveFeedback">Data synchronized locally.</span>
+              <button type="submit" class="action-btn">Save Profile</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Theme switch synchronization (Light OFF / ON)
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+
+    if (localStorage.getItem('hudLightMode') === 'on') {
+      document.body.classList.add('light-mode');
+      themeToggle.setAttribute('aria-pressed', 'true');
+      themeLabel.textContent = 'Light: ON';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      themeToggle.setAttribute('aria-pressed', isLight);
+      themeLabel.textContent = isLight ? 'Light: ON' : 'Light: OFF';
+      localStorage.setItem('hudLightMode', isLight ? 'on' : 'off');
+    });
+
+    // Local persistence for crew profile fields
+    const profileForm = document.getElementById('profileForm');
+    const crewNameInput = document.getElementById('crewName');
+    const displayCrewName = document.getElementById('displayCrewName');
+    const saveFeedback = document.getElementById('saveFeedback');
+
+    const savedProfile = JSON.parse(localStorage.getItem('crewProfileData') || 'null');
+    if (savedProfile) {
+      Object.keys(savedProfile).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) el.value = savedProfile[key];
+      });
+      displayCrewName.textContent = savedProfile.crewName || displayCrewName.textContent;
+    }
+
+    profileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = {};
+      profileForm.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.id) data[el.id] = el.value;
+      });
+      localStorage.setItem('crewProfileData', JSON.stringify(data));
+      displayCrewName.textContent = data.crewName;
+      saveFeedback.textContent = '✔ Record updated in local memory.';
+      setTimeout(() => {
+        saveFeedback.textContent = 'Data synchronized locally.';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

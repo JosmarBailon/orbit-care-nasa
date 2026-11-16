@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbit Care // Countermeasures &amp; EVA Protocols</title>
+  <style>
+    :root {
+      --bg-void: #020704;
+      --bg-panel: #041109;
+      --bg-panel-alt: #06190e;
+      --bg-card: rgba(4, 17, 9, 0.9);
+      --bg-subpanel: rgba(2, 10, 5, 0.94);
+      --bg-frame: radial-gradient(circle at center, rgba(6, 28, 16, 0.55) 0%, rgba(2, 7, 4, 0.96) 100%);
+      --header-grad: linear-gradient(90deg, rgba(104, 255, 155, 0.12) 0%, rgba(4, 17, 9, 0.9) 65%);
+      --grid-line: rgba(40, 199, 111, 0.04);
+      --dot-color: rgba(104, 255, 155, 0.12);
+      --green-bright: #68ff9b;
+      --green-mid: #28c76f;
+      --green-dim: #114b2b;
+      --green-border: #1b6b3e;
+
+      --status-optimo: #68ff9b;
+      --status-optimo-bg: rgba(104, 255, 155, 0.14);
+      --status-precaucion: #fbbf24;
+      --status-precaucion-bg: rgba(251, 191, 36, 0.14);
+      --status-accion: #f87171;
+      --status-accion-bg: rgba(248, 113, 113, 0.16);
+      --privacy-accent: #38bdf8;
+      --privacy-bg: rgba(56, 189, 248, 0.12);
+
+      --text-shadow-glow: 0 0 8px rgba(104, 255, 155, 0.7);
+      --glow-soft: 0 0 10px rgba(104, 255, 155, 0.25);
+      --glow-strong: 0 0 14px rgba(104, 255, 155, 0.55);
+      --inset-shadow: inset 0 0 30px rgba(17, 75, 43, 0.35);
+    }
+
+    body.light-mode {
+      --bg-void: #e6f4ec;
+      --bg-panel: #f4fbf7;
+      --bg-panel-alt: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-subpanel: rgba(238, 249, 243, 0.97);
+      --bg-frame: radial-gradient(circle at center, rgba(235, 250, 241, 0.85) 0%, rgba(214, 238, 224, 0.95) 100%);
+      --header-grad: linear-gradient(90deg, rgba(22, 163, 74, 0.15) 0%, rgba(244, 251, 247, 0.95) 65%);
+      --grid-line: rgba(16, 122, 63, 0.07);
+      --dot-color: rgba(16, 122, 63, 0.16);
+      --green-bright: #0d6e38;
+      --green-mid: #16a34a;
+      --green-dim: #bbf7d0;
+      --green-border: #52b788;
+
+      --status-optimo: #0d6e38;
+      --status-optimo-bg: rgba(22, 163, 74, 0.14);
+      --status-precaucion: #b45309;
+      --status-precaucion-bg: rgba(245, 158, 11, 0.16);
+      --status-accion: #b91c1c;
+      --status-accion-bg: rgba(220, 38, 38, 0.14);
+      --privacy-accent: #0369a1;
+      --privacy-bg: rgba(3, 105, 161, 0.12);
+
+      --text-shadow-glow: none;
+      --glow-soft: 0 2px 8px rgba(13, 110, 56, 0.12);
+      --glow-strong: 0 4px 12px rgba(13, 110, 56, 0.22);
+      --inset-shadow: inset 0 0 20px rgba(82, 183, 136, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--green-bright);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 14px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hud-frame {
+      flex: 1;
+      border: 1px solid var(--green-border);
+      background: var(--bg-frame);
+      box-shadow: inset 0 0 25px rgba(40, 199, 111, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      gap: 14px;
+      position: relative;
+    }
+
+    /* Barra superior */
+    .navbar {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--green-border);
+      border-top: 2px solid var(--green-bright);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: var(--glow-soft);
+      position: relative;
+    }
+
+    .navbar::after {
+      content: "ORBIT CARE // GRAVITATIONAL COUNTERMEASURES & EVA";
+      position: absolute;
+      bottom: -14px;
+      right: 12px;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--green-mid);
+      background-color: var(--bg-void);
+      padding: 0 6px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--green-bright);
+      background-color: var(--bg-panel-alt);
+      color: var(--green-bright);
+      text-decoration: none;
+      box-shadow: var(--glow-soft);
+    }
+
+    .profile-link svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .nav-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background-color: var(--bg-panel-alt);
+      color: var(--green-bright);
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid var(--green-border);
+      border-left: 3px solid var(--green-bright);
+      font-size: 0.88rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(40, 199, 111, 0.15);
+      border-color: var(--green-bright);
+      box-shadow: var(--glow-soft);
+    }
+
+    .nav-btn.privacy-nav {
+      border-left-color: var(--privacy-accent);
+      color: var(--privacy-accent);
+    }
+
+    .nav-btn.privacy-nav:hover {
+      background-color: var(--privacy-bg);
+      border-color: var(--privacy-accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--green-border);
+      color: var(--green-bright);
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: var(--glow-soft);
+    }
+
+    .toggle-track {
+      width: 36px;
+      height: 18px;
+      border: 1px solid var(--green-bright);
+      background-color: var(--bg-void);
+      position: relative;
+      display: inline-block;
+    }
+
+    .toggle-thumb {
+      width: 12px;
+      height: 12px;
+      background-color: var(--green-mid);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.25s ease;
+    }
+
+    body.light-mode .toggle-thumb {
+      transform: translateX(18px);
+      background-color: var(--green-bright);
+    }
+
+    .brand-container {
+      background-color: var(--bg-panel-alt);
+      padding: 0.5rem 1.35rem;
+      border: 1px solid var(--green-bright);
+      border-right: 4px solid var(--green-bright);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      text-shadow: var(--text-shadow-glow);
+      box-shadow: var(--glow-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-indicator {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-bright);
+      box-shadow: 0 0 8px var(--green-bright);
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 6px;
+    }
+
+    .stats-card {
+      width: 100%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--green-border);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: var(--inset-shadow);
+    }
+
+    .corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--green-bright);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .stats-header {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--green-border);
+      background: var(--header-grad);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .stats-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      text-shadow: var(--text-shadow-glow);
+    }
+
+    .eva-grid {
+      padding: 1.25rem;
+      background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .column-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .sub-card {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-subpanel);
+      box-shadow: var(--inset-shadow);
+      padding: 1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .sub-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--green-border);
+      padding-bottom: 0.5rem;
+      font-size: 0.8rem;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Barra de cumplimiento de contramedidas */
+    .progress-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--green-mid);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border: 1px solid var(--green-bright);
+      background-color: var(--bg-void);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, var(--green-mid), var(--green-bright));
+      box-shadow: 0 0 10px var(--green-bright);
+      transition: width 0.3s ease;
+    }
+
+    /* Lista interactiva de contramedidas */
+    .cm-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .cm-item {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+      padding: 0.65rem 0.8rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cm-item:hover {
+      border-color: var(--green-bright);
+    }
+
+    .cm-item.completed {
+      border-left: 4px solid var(--green-bright);
+      background-color: rgba(40, 199, 111, 0.12);
+    }
+
+    .cm-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--green-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .cm-item.completed .cm-checkbox {
+      background-color: var(--green-bright);
+      color: #020704;
+    }
+
+    .cm-info h4 {
+      font-size: 0.82rem;
+      color: var(--green-bright);
+      margin-bottom: 2px;
+    }
+
+    .cm-info p {
+      font-size: 0.73rem;
+      color: var(--green-mid);
+      line-height: 1.35;
+    }
+
+    /* Simulador UTMB Bedrest / Campos de Gravedad */
+    .slider-control {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-control input[type="range"] {
+      width: 100%;
+      accent-color: var(--green-bright);
+      cursor: pointer;
+    }
+
+    .sim-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    .sim-box {
+      border: 1px solid var(--green-border);
+      background-color: var(--bg-panel-alt);
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .sim-box span {
+      font-size: 0.66rem;
+      color: var(--green-mid);
+      text-transform: uppercase;
+    }
+
+    .sim-box strong {
+      font-size: 0.92rem;
+      color: var(--green-bright);
+    }
+
+    /* Verificación Pre-EVA */
+    .eva-status-banner {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--status-optimo);
+      border-left: 6px solid var(--status-optimo);
+      background-color: var(--status-optimo-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.25s ease;
+    }
+
+    .eva-status-banner.blocked {
+      border-color: var(--status-accion);
+      border-left-color: var(--status-accion);
+      background-color: var(--status-accion-bg);
+      color: var(--status-accion);
+    }
+
+    .eva-status-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .eva-check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+
+    .eva-gate-btn {
+      background-color: var(--bg-panel-alt);
+      border: 1px solid var(--green-border);
+      color: var(--green-bright);
+      padding: 0.6rem 0.7rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .eva-gate-btn.fail {
+      border-color: var(--status-accion);
+      background-color: var(--status-accion-bg);
+      color: var(--status-accion);
+    }
+
+    .gate-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border: 1px solid currentColor;
+    }
+
+    /* Contingencias en Traje EMU */
+    .contingency-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+    }
+
+    .contingency-table th,
+    .contingency-table td {
+      border: 1px solid var(--green-border);
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+    }
+
+    .contingency-table th {
+      background-color: var(--bg-panel-alt);
+      color: var(--green-bright);
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.8px;
+    }
+
+    @media (max-width: 1040px) {
+      .eva-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .sim-metrics,
+      .eva-check-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-frame">
+    <!-- Top bar -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="usuario.html" class="profile-link" title="Emilio Hernández Landa Dossier" aria-label="Profile">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+
+        <nav class="nav-options">
+          <a href="main.html" class="nav-btn">Main Dashboard</a>
+          <a href="opcion1.html" class="nav-btn privacy-nav">Private Space</a>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false" title="Toggle display brightness">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span id="themeLabel">Light: OFF</span>
+        </button>
+
+        <div class="brand-container">
+          <span class="brand-indicator"></span>
+          <span>Orbit Care</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <section class="stats-card">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="stats-header">
+          <h2>Countermeasures &amp; EVA Protocols // Crew Member: Emilio Hernández Landa</h2>
+          <span style="font-size: 0.78rem; letter-spacing: 1px;">REFERENCE: UTMB BEDREST / HRR</span>
+        </div>
+
+        <div class="eva-grid">
+          <!-- LEFT COLUMN: Daily Countermeasures & UTMB Simulator -->
+          <div class="column-stack">
+
+            <article class="sub-card">
+              <div class="sub-card-header">
+                <span>Daily Preventive Routine (HRP)</span>
+                <span id="cmCounterText">2 / 5 COMPLETED</span>
+              </div>
+
+              <div class="progress-wrapper">
+                <div class="progress-meta">
+                  <span>Physiological Protection Index</span>
+                  <strong id="cmPercentText">DEFICIENT</strong>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="cmProgressFill"></div>
+                </div>
+              </div>
+
+              <ul class="cm-list" id="cmList">
+                <li class="cm-item completed" data-id="ared">
+                  <div class="cm-checkbox">✓</div>
+                  <div class="cm-info">
+                    <h4>ARED Resistive Exercise (45 min)</h4>
+                    <p>Prevents bone mineral density loss (1–1.5% monthly) and lower-limb muscle atrophy.</p>
+                  </div>
+                </li>
+                <li class="cm-item completed" data-id="cuffs">
+                  <div class="cm-checkbox">✓</div>
+                  <div class="cm-info">
+                    <h4>Thigh Compression Cuffs</h4>
+                    <p>Mitigates cephalad fluid shift and lowers intraocular/intracranial pressure (SANS).</p>
+                  </div>
+                </li>
+                <li class="cm-item" data-id="t2">
+                  <div class="cm-checkbox"></div>
+                  <div class="cm-info">
+                    <h4>T2 Treadmill with Axial Loading Harness (30 min)</h4>
+                    <p>Neuromuscular stimulation, vestibular balance recovery, and cardiovascular conditioning.</p>
+                  </div>
+                </li>
+                <li class="cm-item" data-id="nutri">
+                  <div class="cm-checkbox"></div>
+                  <div class="cm-info">
+                    <h4>Hydration + Supplementation (Vitamin D, Calcium &amp; Antioxidants)</h4>
+                    <p>Prevents renal stone formation (OSD-571) and lowers space radiation oxidative stress.</p>
+                  </div>
+                </li>
+                <li class="cm-item" data-id="photo">
+                  <div class="cm-checkbox"></div>
+                  <div class="cm-info">
+                    <h4>Circadian Phototherapy (480 nm Blue Light)</h4>
+                    <p>Synchronizes melatonin and reduces cognitive fatigue from isolation and 90-min orbital cycles.</p>
+                  </div>
+                </li>
+              </ul>
+            </article>
+
+            <article class="sub-card">
+              <div class="sub-card-header">
+                <span>Gravity Fields Simulator (70-Day UTMB Bedrest)</span>
+                <span id="simDayLabel">DAY 15 IN ORBIT</span>
+              </div>
+
+              <div class="slider-control">
+                <input type="range" id="missionDaySlider" min="1" max="70" value="15">
+              </div>
+
+              <div class="sim-metrics">
+                <div class="sim-box">
+                  <span>Bone Preservation</span>
+                  <strong id="boneLossVal">Perfect</strong>
+                </div>
+                <div class="sim-box">
+                  <span>Muscle Status</span>
+                  <strong id="muscleLossVal">Acceptable</strong>
+                </div>
+                <div class="sim-box">
+                  <span>SANS Neuro-Ocular Status</span>
+                  <strong id="sansRiskVal">Perfect</strong>
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Pre-EVA Clearance & Contingencies -->
+          <div class="column-stack">
+
+            <article class="sub-card">
+              <div class="sub-card-header">
+                <span>Pre-EVA Biometric Gate (Extravehicular Activity)</span>
+                <span>CLICK TO SIMULATE FAULT</span>
+              </div>
+
+              <div class="eva-status-banner" id="evaStatusBanner">
+                <div>
+                  <div style="font-size: 0.68rem; opacity: 0.85; letter-spacing: 1px;">ORBIT CARE OPERATIONAL CLEARANCE</div>
+                  <div class="eva-status-title" id="evaStatusTitle">CLEARED FOR EVA // 6/6 PARAMETERS NOMINAL</div>
+                </div>
+              </div>
+
+              <div class="eva-check-grid" id="evaGateGrid">
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>Blood Pressure (118/76)</span>
+                  <span class="gate-pill">NOMINAL</span>
+                </button>
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>SpO₂ Saturation (99%)</span>
+                  <span class="gate-pill">NOMINAL</span>
+                </button>
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>Radiation Dose (14.2 mSv)</span>
+                  <span class="gate-pill">BELOW LIMIT</span>
+                </button>
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>PVT Cognitive Test</span>
+                  <span class="gate-pill" data-ok-label="PERFECT">PERFECT</span>
+                </button>
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>Pre-Breathe Denitrogenation</span>
+                  <span class="gate-pill">COMPLETE</span>
+                </button>
+                <button type="button" class="eva-gate-btn" data-ok="true">
+                  <span>SC-16 Muscle Integrity</span>
+                  <span class="gate-pill" data-ok-label="PERFECT">PERFECT</span>
+                </button>
+              </div>
+            </article>
+
+            <article class="sub-card">
+              <div class="sub-card-header">
+                <span>EMU Spacesuit Contingency Protocols</span>
+                <span>OFFLINE AI</span>
+              </div>
+
+              <table class="contingency-table">
+                <thead>
+                  <tr>
+                    <th>Detected Event</th>
+                    <th>Biomarker / Sensor</th>
+                    <th>Immediate Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Helmet CO₂ Spike</strong></td>
+                    <td>CO₂ &gt; 0.8% + Tachypnea</td>
+                    <td>Reduce physical exertion, open secondary CO₂ scrubber valve, and return to airlock.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Thermal Stress</strong></td>
+                    <td>Skin temp &gt; 38.2°C + High HR</td>
+                    <td>Set Liquid Cooling &amp; Ventilation Garment (LCVG) flow to maximum and hydrate.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Solar Particle Event (SPE)</strong></td>
+                    <td>Radiation alert &gt; HRR threshold</td>
+                    <td>Abort EVA immediately and shelter inside water/polyethylene-shielded core.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // 1. Theme persistence (Light OFF / ON)
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+
+    if (localStorage.getItem('orbitLightMode') === 'on') {
+      document.body.classList.add('light-mode');
+      themeToggle.setAttribute('aria-pressed', 'true');
+      themeLabel.textContent = 'Light: ON';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      themeToggle.setAttribute('aria-pressed', isLight);
+      themeLabel.textContent = isLight ? 'Light: ON' : 'Light: OFF';
+      localStorage.setItem('orbitLightMode', isLight ? 'on' : 'off');
+    });
+
+    // 2. Daily Countermeasures checklist with local persistence
+    const cmItems = document.querySelectorAll('.cm-item');
+    const cmCounterText = document.getElementById('cmCounterText');
+    const cmPercentText = document.getElementById('cmPercentText');
+    const cmProgressFill = document.getElementById('cmProgressFill');
+
+    function cmLevelWord(done, total) {
+      if (done >= total) return 'PERFECT';
+      if (done === total - 1) return 'ACCEPTABLE';
+      if (done >= Math.ceil(total * 0.5)) return 'SUFFICIENT';
+      if (done >= 1) return 'DEFICIENT';
+      return 'CRITICAL';
+    }
+
+    function updateCountermeasuresUI() {
+      const total = cmItems.length;
+      const done = document.querySelectorAll('.cm-item.completed').length;
+      const pct = Math.round((done / total) * 100);
+      cmCounterText.textContent = `${done} / ${total} COMPLETED`;
+      cmPercentText.textContent = cmLevelWord(done, total);
+      cmProgressFill.style.width = `${pct}%`;
+
+      const state = Array.from(cmItems).map(item => item.classList.contains('completed'));
+      localStorage.setItem('orbitCmEmilio', JSON.stringify(state));
+      updateSimulation();
+    }
+
+    const savedCm = JSON.parse(localStorage.getItem('orbitCmEmilio') || 'null');
+    if (savedCm && savedCm.length === cmItems.length) {
+      cmItems.forEach((item, i) => {
+        item.classList.toggle('completed', savedCm[i]);
+        item.querySelector('.cm-checkbox').textContent = savedCm[i] ? '✓' : '';
+      });
+    }
+
+    cmItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const isDone = item.classList.toggle('completed');
+        item.querySelector('.cm-checkbox').textContent = isDone ? '✓' : '';
+        updateCountermeasuresUI();
+      });
+    });
+
+    // 3. UTMB Bedrest Simulator (Days 1 to 70)
+    const missionDaySlider = document.getElementById('missionDaySlider');
+    const simDayLabel = document.getElementById('simDayLabel');
+    const boneLossVal = document.getElementById('boneLossVal');
+    const muscleLossVal = document.getElementById('muscleLossVal');
+    const sansRiskVal = document.getElementById('sansRiskVal');
+
+    function simWord(val, tPerfect, tAcceptable, tSufficient, tDeficient) {
+      if (val <= tPerfect) return 'Perfect';
+      if (val <= tAcceptable) return 'Acceptable';
+      if (val <= tSufficient) return 'Sufficient';
+      if (val <= tDeficient) return 'Deficient';
+      return 'Critical';
+    }
+
+    function updateSimulation() {
+      const days = parseInt(missionDaySlider.value, 10);
+      const done = document.querySelectorAll('.cm-item.completed').length;
+      const protectionFactor = 0.25 + (done / cmItems.length) * 0.65; // Up to 90% mitigation
+
+      simDayLabel.textContent = `DAY ${days} IN ORBIT`;
+
+      const rawBoneLoss = (days / 30) * 1.35;
+      const netBoneLoss = rawBoneLoss * (1 - protectionFactor);
+      boneLossVal.textContent = simWord(netBoneLoss, 0.30, 0.65, 1.15, 1.75);
+
+      const rawMuscleLoss = (days / 30) * 2.4;
+      const netMuscleLoss = rawMuscleLoss * (1 - protectionFactor);
+      muscleLossVal.textContent = simWord(netMuscleLoss, 0.55, 1.15, 2.0, 3.0);
+
+      const sansPct = Math.min(85, Math.round((days / 70) * 65 * (1 - protectionFactor * 0.7)));
+      sansRiskVal.textContent = simWord(sansPct, 12, 24, 36, 49);
+    }
+
+    missionDaySlider.addEventListener('input', updateSimulation);
+    updateCountermeasuresUI();
+
+    // 4. Pre-EVA Biometric Gate
+    const evaGateBtns = document.querySelectorAll('.eva-gate-btn');
+    const evaStatusBanner = document.getElementById('evaStatusBanner');
+    const evaStatusTitle = document.getElementById('evaStatusTitle');
+
+    function evaluateEvaReadiness() {
+      let okCount = 0;
+      evaGateBtns.forEach(btn => {
+        if (btn.dataset.ok === 'true') okCount++;
+      });
+
+      if (okCount === evaGateBtns.length) {
+        evaStatusBanner.classList.remove('blocked');
+        evaStatusTitle.textContent = `CLEARED FOR EVA // ${okCount}/${evaGateBtns.length} PARAMETERS NOMINAL`;
+      } else {
+        evaStatusBanner.classList.add('blocked');
+        evaStatusTitle.textContent = `EVA HOLD // ${evaGateBtns.length - okCount} PARAMETER(S) OUT OF RANGE`;
+      }
+    }
+
+    evaGateBtns.forEach(btn => {
+      const pill = btn.querySelector('.gate-pill');
+      if (pill && !pill.dataset.okLabel) pill.dataset.okLabel = pill.textContent.trim();
+      btn.addEventListener('click', () => {
+        const isOk = btn.dataset.ok === 'true';
+        btn.dataset.ok = isOk ? 'false' : 'true';
+        btn.classList.toggle('fail', isOk);
+        pill.textContent = isOk ? 'CRITICAL' : (pill.dataset.okLabel || 'PERFECT');
+        evaluateEvaReadiness();
+      });
+    });
+  </script>
+</body>
+</html>
